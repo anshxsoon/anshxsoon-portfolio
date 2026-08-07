@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANSHXSOON | Video Editor & Content Creator</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: "#030303",
+                        foreground: "#f5f5f5",
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    animation: {
+                        "pulse-slow": "pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+                        "ping-slow": "ping 3s cubic-bezier(0, 0, 0.2, 1) infinite",
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom CSS -->
+    <style>
+        body {
+            background-color: #030303;
+            color: #f5f5f5;
+            overflow-x: hidden;
+            cursor: none; 
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.035;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #030303; }
+        ::-webkit-scrollbar-thumb {
+            background: #1e0b36;
+            border-radius: 4px;
+            border: 1px solid rgba(168, 85, 247, 0.2);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a855f7;
+            box-shadow: 0 0 10px #a855f7;
+        }
+
+        .glass-card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; will-change: transform; }
+        .glass-card-hover:hover {
+            background: rgba(28, 12, 48, 0.6);
+            border-color: rgba(168, 85, 247, 0.5);
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.25);
+        }
+        
+        #custom-cursor {
+            position: fixed;
+            top: 0; left: 0;
+            width: 24px; height: 24px;
+            border: 1px solid #a855f7;
+            background: rgba(147, 51, 234, 0.3);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+            box-shadow: 0 0 25px rgba(168, 85, 247, 0.8);
+            backdrop-filter: blur(2px);
+            will-change: transform;
+        }
+        #custom-cursor.hovered {
+            width: 48px; height: 48px;
+            background: rgba(147, 51, 234, 0.1);
+        }
+
+        #main-content { opacity: 0; }
+        .skill-bar-fill { width: 0%; transition: width 1.5s ease-out; }
+
+        /* 3D Cube CSS Optimized */
+        .cube-container { width: 40px; height: 40px; perspective: 800px; margin: 0 auto 20px; will-change: transform; }
+        .cube { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; animation: spin 8s infinite linear; }
+        .face { position: absolute; width: 40px; height: 40px; border: 1px solid rgba(168, 85, 247, 0.6); background: rgba(168, 85, 247, 0.1); box-shadow: inset 0 0 10px rgba(168, 85, 247, 0.3); }
+        .front  { transform: translateZ(20px); }
+        .back   { transform: rotateY(180deg) translateZ(20px); }
+        .right  { transform: rotateY(90deg) translateZ(20px); }
+        .left   { transform: rotateY(-90deg) translateZ(20px); }
+        .top    { transform: rotateX(90deg) translateZ(20px); }
+        .bottom { transform: rotateX(-90deg) translateZ(20px); }
+        @keyframes spin { from { transform: rotateX(0) rotateY(0); } to { transform: rotateX(360deg) rotateY(360deg); } }
+    </style>
+</head>
+<body class="antialiased selection:bg-purple-600 selection:text-white">
+
+    <div id="custom-cursor" class="hidden md:block"></div>
+
+    <div id="loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#030303] text-white transition-opacity duration-700">
+        <div class="relative mb-8">
+            <h1 class="text-5xl md:text-7xl font-extrabold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-fuchsia-500 to-purple-600 animate-pulse">
+                ANSHXSOON
+            </h1>
+            <div class="absolute inset-0 text-5xl md:text-7xl font-extrabold tracking-widest text-purple-600 opacity-40 blur-md animate-ping-slow">
+                ANSHXSOON
+            </div>
+        </div>
+        <div class="font-mono text-xl md:text-2xl text-purple-400 tracking-wider">
+            <span id="loader-percentage">0%</span>
+        </div>
+        <div class="w-48 md:w-64 h-[2px] bg-neutral-800 mt-4 overflow-hidden rounded-full relative transform-gpu">
+            <div id="loader-bar" class="h-full bg-gradient-to-r from-purple-600 to-fuchsia-400 shadow-[0_0_15px_#a855f7] w-0 transition-all duration-75"></div>
+        </div>
+    </div>
+
+    <div id="main-content" class="transition-opacity duration-1000">
+        
+        <header class="fixed top-0 left-0 right-0 z-40 px-6 py-4 backdrop-blur-md bg-[#030303]/80 border-b border-purple-500/10">
+            <div class="max-w-7xl mx-auto flex items-center justify-between">
+                <a href="#home" class="text-xl font-extrabold tracking-wider text-white hover:text-purple-400 transition-colors">
+                    ANSH<span class="text-purple-500">X</span>SOON
+                </a>
+                
+                <nav class="hidden md:flex items-center gap-8">
+                    <a href="#home" class="text-sm tracking-widest text-neutral-400 hover:text-purple-400 uppercase transition-colors">Home</a>
+                    <a href="#projects" class="text-sm tracking-widest text-neutral-400 hover:text-purple-400 uppercase transition-colors">Projects</a>
+                    <a href="#about" class="text-sm tracking-widest text-neutral-400 hover:text-purple-400 uppercase transition-colors">About</a>
+                    <a href="#contact" class="text-sm tracking-widest text-neutral-400 hover:text-purple-400 uppercase transition-colors">Contact</a>
+                    <a href="https://www.youtube.com/@axshxsoon" target="_blank" class="flex items-center gap-2 px-4 py-2 rounded-full border border-purple-500/30 bg-purple-950/20 text-purple-300 text-xs tracking-wider uppercase hover:bg-purple-600 hover:text-white transition-all shadow-[0_0_15px_rgba(168,85,247,0.2)]">
+                        <i data-lucide="youtube" class="w-4 h-4"></i> YouTube
+                    </a>
+                </nav>
+
+                <button id="mobile-menu-btn" class="md:hidden text-white p-2 rounded-lg border border-purple-500/20 bg-purple-950/30">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full bg-[#030303]/95 backdrop-blur-xl border-b border-purple-500/20 px-6 py-8 flex flex-col gap-6">
+                <a href="#home" class="mobile-link text-lg font-medium text-neutral-300 hover:text-purple-400 transition-colors">Home</a>
+                <a href="#projects" class="mobile-link text-lg font-medium text-neutral-300 hover:text-purple-400 transition-colors">Projects</a>
+                <a href="#about" class="mobile-link text-lg font-medium text-neutral-300 hover:text-purple-400 transition-colors">About</a>
+                <a href="#contact" class="mobile-link text-lg font-medium text-neutral-300 hover:text-purple-400 transition-colors">Contact</a>
+                <a href="https://www.youtube.com/@axshxsoon" target="_blank" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-purple-500/40 bg-purple-600 text-white font-medium shadow-[0_0_20px_rgba(168,85,247,0.4)]">
+                    <i data-lucide="youtube" class="w-5 h-5"></i> Visit YouTube
+                </a>
+            </div>
+        </header>
+
+        <section id="home" class="scroll-section relative min-h-screen flex items-center justify-center pt-24 pb-16 px-6 overflow-hidden transform-gpu">
+            <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-purple-600/20 rounded-full blur-[140px] pointer-events-none"></div>
+            <div class="absolute bottom-10 right-10 w-[300px] h-[300px] bg-fuchsia-600/10 rounded-full blur-[120px] pointer-events-none"></div>
+
+            <div class="relative z-10 max-w-5xl mx-auto text-center flex flex-col items-center opacity-0 translate-y-5" id="hero-content">
+                
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-purple-500/30 bg-purple-950/20 backdrop-blur-md mb-8">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                    <span class="text-xs text-purple-300 tracking-wider uppercase font-mono">Available for Freelance</span>
+                </div>
+
+                <div data-tilt data-tilt-max="15" data-tilt-speed="400" data-tilt-glare="true" data-tilt-max-glare="0.5" class="rounded-full">
+                    <img src="https://cdn.discordapp.com/avatars/1313194277873913896/b27b999aec0c214eaf97c3a19bbb82ca.png?size=4096" alt="Ansh Profile" class="w-32 h-32 md:w-40 md:h-40 rounded-full border-2 border-purple-500 shadow-[0_0_30px_rgba(168,85,247,0.6)] object-cover mb-6 cursor-pointer">
+                </div>
+
+                <h1 class="text-6xl sm:text-8xl md:text-9xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white via-neutral-200 to-purple-400 mb-4">
+                    ANSHXSOON
+                </h1>
+
+                <p class="text-xl sm:text-2xl md:text-3xl font-light text-purple-300/80 tracking-widest uppercase mb-6">
+                    Video Editor & Content Creator
+                </p>
+
+                <p class="max-w-2xl text-neutral-400 text-sm sm:text-base leading-relaxed mb-10">
+                    Crafting cinematic edits that transform emotions into unforgettable visual stories.
+                </p>
+
+                <div class="flex flex-wrap gap-4 justify-center">
+                    <a href="#projects" class="flex items-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white font-medium shadow-[0_0_30px_rgba(168,85,247,0.5)] hover:shadow-[0_0_45px_rgba(168,85,247,0.8)] transition-all transform hover:-translate-y-1 cursor-pointer">
+                        <i data-lucide="film" class="w-5 h-5"></i> View Projects
+                    </a>
+                    <a href="#contact" class="flex items-center gap-2 px-8 py-4 rounded-full border border-purple-500/30 bg-purple-950/20 text-purple-200 font-medium backdrop-blur-md hover:bg-purple-900/40 hover:border-purple-400 transition-all transform hover:-translate-y-1 cursor-pointer">
+                        <i data-lucide="send" class="w-5 h-5"></i> Contact Me
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="projects" class="scroll-section py-24 px-6 max-w-7xl mx-auto transform-gpu">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+                <div>
+                    <span class="text-xs font-mono tracking-widest text-purple-400 uppercase">Portfolio</span>
+                    <h2 class="text-4xl md:text-5xl font-extrabold text-white mt-2">Selected Works</h2>
+                </div>
+                
+                <div class="relative w-full md:w-72">
+                    <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500 w-4 h-4"></i>
+                    <input type="text" id="project-search" placeholder="Search edits..." class="w-full bg-purple-950/20 border border-purple-500/20 rounded-full py-2.5 pl-10 pr-4 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-purple-500 transition-colors cursor-pointer">
+                </div>
+            </div>
+
+            <div class="flex flex-wrap gap-2 mb-10" id="category-filters">
+                <button class="filter-btn active px-5 py-2 rounded-full text-xs tracking-wider uppercase transition-all bg-purple-600 text-white shadow-[0_0_20px_rgba(168,85,247,0.5)] cursor-pointer" data-filter="All Projects">All Projects</button>
+                <button class="filter-btn px-5 py-2 rounded-full text-xs tracking-wider uppercase transition-all bg-purple-950/10 border border-purple-500/10 text-neutral-400 hover:text-white hover:border-purple-500/30 cursor-pointer" data-filter="Featured">Featured</button>
+                <button class="filter-btn px-5 py-2 rounded-full text-xs tracking-wider uppercase transition-all bg-purple-950/10 border border-purple-500/10 text-neutral-400 hover:text-white hover:border-purple-500/30 cursor-pointer" data-filter="Spider-Man">Spider-Man</button>
+                <button class="filter-btn px-5 py-2 rounded-full text-xs tracking-wider uppercase transition-all bg-purple-950/10 border border-purple-500/10 text-neutral-400 hover:text-white hover:border-purple-500/30 cursor-pointer" data-filter="Love Edits">Love Edits</button>
+                <button class="filter-btn px-5 py-2 rounded-full text-xs tracking-wider uppercase transition-all bg-purple-950/10 border border-purple-500/10 text-neutral-400 hover:text-white hover:border-purple-500/30 cursor-pointer" data-filter="Latest Uploads">Latest Uploads</button>
+            </div>
+
+            <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            </div>
+        </section>
+
+        <section id="about" class="scroll-section py-24 px-6 max-w-7xl mx-auto border-t border-purple-500/10 transform-gpu">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+                <div>
+                    <span class="text-xs font-mono tracking-widest text-purple-400 uppercase">Behind the Edits</span>
+                    <h2 class="text-4xl md:text-5xl font-extrabold text-white mt-2 mb-6">About Ansh</h2>
+                    <p class="text-neutral-400 leading-relaxed mb-8">
+                        Specializing in high-octane velocity editing, color grading, and narrative visual storytelling. With over a year of experience pushing Adobe After Effects to its absolute limits, every frame is crafted with obsession over synchronization and emotional depth.
+                    </p>
+
+                    <div class="grid grid-cols-2 gap-4 mb-10">
+                        <div class="p-4 rounded-xl bg-purple-950/20 border border-purple-500/20 transform transition hover:-translate-y-1 hover:border-purple-400">
+                            <span class="text-xs text-neutral-500 block">Experience</span>
+                            <span class="text-xl font-bold text-purple-300">1+ Years</span>
+                        </div>
+                        <div class="p-4 rounded-xl bg-purple-950/20 border border-purple-500/20 transform transition hover:-translate-y-1 hover:border-purple-400">
+                            <span class="text-xs text-neutral-500 block">Primary Tool</span>
+                            <span class="text-xl font-bold text-purple-300">Adobe After Effects</span>
+                        </div>
+                    </div>
+
+                    <h3 class="text-xl font-bold text-white mb-6">Editing Mastery</h3>
+                    <div class="space-y-4" id="skills-container"></div>
+                </div>
+
+                <div data-tilt data-tilt-max="5" data-tilt-speed="400" data-tilt-glare="true" data-tilt-max-glare="0.1" class="p-8 rounded-3xl bg-purple-950/10 border border-purple-500/20 backdrop-blur-md">
+                    <h3 class="text-2xl font-bold text-white mb-8">Creative Journey</h3>
+                    <div class="relative border-l border-purple-500/30 pl-6 space-y-8">
+                        <div class="relative">
+                            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-[#030303] border-2 border-purple-500 shadow-[0_0_10px_#a855f7]"></div>
+                            <span class="text-xs font-mono text-purple-400 uppercase">Phase 1</span>
+                            <h4 class="text-lg font-bold text-white mt-1">Started Editing</h4>
+                            <p class="text-xs text-neutral-400 mt-1 leading-relaxed">Began exploring simple cuts and visual pacing.</p>
+                        </div>
+                        <div class="relative">
+                            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-[#030303] border-2 border-purple-500 shadow-[0_0_10px_#a855f7]"></div>
+                            <span class="text-xs font-mono text-purple-400 uppercase">Phase 2</span>
+                            <h4 class="text-lg font-bold text-white mt-1">Learned After Effects</h4>
+                            <p class="text-xs text-neutral-400 mt-1 leading-relaxed">Mastered keyframes, graph editors, wiggle expressions, and page turns.</p>
+                        </div>
+                        <div class="relative">
+                            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-[#030303] border-2 border-purple-500 shadow-[0_0_10px_#a855f7]"></div>
+                            <span class="text-xs font-mono text-purple-400 uppercase">Phase 3</span>
+                            <h4 class="text-lg font-bold text-white mt-1">Uploaded First Edit</h4>
+                            <p class="text-xs text-neutral-400 mt-1 leading-relaxed">Launched social channels and started building an online audience.</p>
+                        </div>
+                        <div class="relative">
+                            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-[#030303] border-2 border-purple-500 shadow-[0_0_10px_#a855f7]"></div>
+                            <span class="text-xs font-mono text-purple-400 uppercase">Phase 4</span>
+                            <h4 class="text-lg font-bold text-white mt-1">Reached 90+ Edits</h4>
+                            <p class="text-xs text-neutral-400 mt-1 leading-relaxed">Pushed boundaries in synchronization, velocity, and color grading.</p>
+                        </div>
+                        <div class="relative">
+                            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-[#030303] border-2 border-purple-500 shadow-[0_0_10px_#a855f7]"></div>
+                            <span class="text-xs font-mono text-purple-400 uppercase">Phase 5</span>
+                            <h4 class="text-lg font-bold text-white mt-1">Freelance & Beyond</h4>
+                            <p class="text-xs text-neutral-400 mt-1 leading-relaxed">Collaborating with creators worldwide to produce high-impact edits.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="scroll-section py-24 px-6 max-w-4xl mx-auto transform-gpu">
+            <div data-tilt data-tilt-max="3" data-tilt-speed="400" data-tilt-glare="true" data-tilt-max-glare="0.2" class="p-8 md:p-12 rounded-3xl bg-gradient-to-b from-purple-950/30 to-[#030303] border border-purple-500/30 backdrop-blur-xl shadow-[0_0_50px_rgba(168,85,247,0.15)] text-center relative overflow-hidden">
+                <span class="text-xs font-mono tracking-widest text-purple-400 uppercase">Get In Touch</span>
+                <h2 class="text-4xl md:text-5xl font-extrabold text-white mt-2 mb-4">Let's Create Together</h2>
+                <p class="text-neutral-400 text-sm max-w-lg mx-auto mb-10">
+                    Have a project in mind or want a high-tier edit for your channel? Reach out directly.
+                </p>
+
+                <div class="flex flex-wrap items-center justify-center gap-4 mb-10 relative z-10">
+                    <a href="mailto:anshgamerz1212@gmail.com" class="flex items-center gap-3 px-6 py-3.5 rounded-xl border border-purple-500/30 bg-purple-950/30 text-white font-mono text-sm hover:border-purple-400 transition-all cursor-pointer">
+                        <i data-lucide="mail" class="text-purple-400 w-5 h-5"></i> Email
+                    </a>
+                    <a href="https://www.instagram.com/anshxsoon" target="_blank" class="flex items-center gap-3 px-6 py-3.5 rounded-xl border border-purple-500/30 bg-purple-950/30 text-white font-mono text-sm hover:border-purple-400 transition-all cursor-pointer">
+                        <i data-lucide="instagram" class="text-purple-400 w-5 h-5"></i> Instagram
+                    </a>
+                    <a href="https://discord.gg/anshxsoon" target="_blank" class="flex items-center gap-3 px-6 py-3.5 rounded-xl border border-purple-500/30 bg-purple-950/30 text-white font-mono text-sm hover:border-purple-400 transition-all cursor-pointer">
+                        <i data-lucide="message-square" class="text-purple-400 w-5 h-5"></i> Server
+                    </a>
+                    <a href="https://discord.com/users/1313194277873913896" target="_blank" class="flex items-center gap-3 px-6 py-3.5 rounded-xl border border-purple-500/30 bg-purple-950/30 text-white font-mono text-sm hover:border-purple-400 transition-all cursor-pointer">
+                        <i data-lucide="user" class="text-purple-400 w-5 h-5"></i> Discord
+                    </a>
+                </div>
+
+                <div class="inline-flex items-center gap-6 text-xs text-neutral-400 font-mono pt-6 border-t border-purple-500/10">
+                    <span class="flex items-center gap-1.5">
+                        <i data-lucide="map-pin" class="text-purple-400 w-3 h-3"></i> India
+                    </span>
+                    <span class="flex items-center gap-1.5">
+                        <i data-lucide="check-circle-2" class="text-emerald-400 w-3 h-3"></i> Freelance Available: YES
+                    </span>
+                </div>
+            </div>
+        </section>
+
+        <footer class="py-16 px-6 border-t border-purple-500/10 text-center font-mono text-xs text-neutral-500 relative overflow-hidden transform-gpu">
+            
+            <div class="cube-container">
+                <div class="cube">
+                    <div class="face front"></div>
+                    <div class="face back"></div>
+                    <div class="face right"></div>
+                    <div class="face left"></div>
+                    <div class="face top"></div>
+                    <div class="face bottom"></div>
+                </div>
+            </div>
+
+            <p class="italic text-purple-300/80 mb-4 text-sm">"In every universe, the edit tells the story."</p>
+            <p>Built with <span class="text-red-500 text-base">❤️</span> by Ansh. All rights reserved.</p>
+        </footer>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
+
+    <script>
+        lucide.createIcons();
+
+        // 1. Tab Switch
+        let docTitle = document.title;
+        window.addEventListener("blur", () => {
+            document.title = "Come back to the Spider-Verse! 🕸️";
+        });
+        window.addEventListener("focus", () => {
+            document.title = docTitle;
+        });
+
+        // 2. Optimized Lenis Smooth Scroll linked with GSAP Ticker
+        const lenis = new Lenis({
+            lerp: 0.1, 
+            smoothWheel: true,
+        });
+
+        lenis.on('scroll', ScrollTrigger.update);
+
+        gsap.ticker.add((time) => {
+            lenis.raf(time * 1000);
+        });
+        
+        gsap.ticker.lagSmoothing(0);
+
+        // 3. Custom Cursor (Simplified for performance)
+        const cursor = document.getElementById('custom-cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.transform = `translate3d(calc(${e.clientX}px - 50%), calc(${e.clientY}px - 50%), 0)`;
+        });
+        document.addEventListener('mouseover', (e) => {
+            if (e.target.closest('a, button, input, .cursor-pointer')) {
+                cursor.classList.add('hovered');
+            } else {
+                cursor.classList.remove('hovered');
+            }
+        });
+
+        // 4. GSAP ScrollTrigger
+        gsap.registerPlugin(ScrollTrigger);
+        
+        const initScrollAnimations = () => {
+            gsap.utils.toArray('.scroll-section').forEach(section => {
+                gsap.from(section, {
+                    opacity: 0,
+                    y: 40,
+                    duration: 1,
+                    ease: "power3.out",
+                    scrollTrigger: {
+                        trigger: section,
+                        start: "top 85%",
+                    }
+                });
+            });
+        };
+
+        // 5. Loader
+        let progress = 0;
+        const loaderText = document.getElementById('loader-percentage');
+        const loaderBar = document.getElementById('loader-bar');
+        const loader = document.getElementById('loader');
+        const mainContent = document.getElementById('main-content');
+        const heroContent = document.getElementById('hero-content');
+
+        const interval = setInterval(() => {
+            progress += Math.floor(Math.random() * 8) + 2;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(interval);
+                loaderText.innerText = '100%';
+                loaderBar.style.width = '100%';
+                
+                setTimeout(() => {
+                    loader.style.opacity = '0';
+                    setTimeout(() => {
+                        loader.style.display = 'none';
+                        mainContent.style.opacity = '1';
+                        
+                        gsap.to(heroContent, { opacity: 1, y: 0, duration: 1, delay: 0.2, ease: "power3.out" });
+                        initScrollAnimations();
+
+                        setTimeout(() => {
+                            document.querySelectorAll('.skill-bar-fill').forEach(bar => {
+                                bar.style.width = bar.getAttribute('data-level');
+                            });
+                        }, 500);
+
+                    }, 700);
+                }, 500);
+            } else {
+                loaderText.innerText = progress + '%';
+                loaderBar.style.width = progress + '%';
+            }
+        }, 40);
+
+        // 6. Mobile Menu
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+        });
+
+        // 7. Projects
+        const projectsData = [
+            { id: 1, title: 'Andrew Garfield ❤️ "it\'s kind of okay to miss somebody" | Spider-Man Edit', category: 'Love Edits', url: 'https://youtube.com/shorts/d_vFeI98xYw?si=JfJbsxTKDRWON4-e', thumb: 'https://img.youtube.com/vi/d_vFeI98xYw/hqdefault.jpg', views: '24K+', duration: '00:34', featured: false },
+            { id: 2, title: 'The most heartbreaking Spider-Man couple 💔 #GwenStacy', category: 'Spider-Man', url: 'https://youtube.com/shorts/4QUhni1Gc_k?si=cBgGw0FrTI55z8aw', thumb: 'https://img.youtube.com/vi/4QUhni1Gc_k/hqdefault.jpg', views: '37K+', duration: '00:34', featured: true },
+            { id: 3, title: 'POV: You found the perfect Peter & Gwen edit', category: 'Love Edits', url: 'https://youtube.com/shorts/BcIytMV6xlA?si=qRF8EEGVX5rz-qx6', thumb: 'https://img.youtube.com/vi/BcIytMV6xlA/hqdefault.jpg', views: '3.8K+', duration: '00:28', featured: false },
+            { id: 4, title: 'Best edit for Peter and Gwen fans! 🕸️❤️ #Marvel', category: 'Featured', url: 'https://youtube.com/shorts/Kt-j1HhzA7E?si=vQkYUrDCPOzBOhA9', thumb: 'https://img.youtube.com/vi/Kt-j1HhzA7E/hqdefault.jpg', views: '4.7K+', duration: '00:19', featured: true },
+            { id: 5, title: 'Peter and MJ | Spiderman NWH X BND | See You Again', category: 'Spider-Man', url: 'https://youtube.com/shorts/Nh0MuTUyzfc?si=2CVtcfj4Glr6F0Rh', thumb: 'https://img.youtube.com/vi/Nh0MuTUyzfc/hqdefault.jpg', views: '8.6K+', duration: '00:42', featured: false },
+            { id: 6, title: 'They deserved a better ending 🕷️😭 #gwenstacy', category: 'Latest Uploads', url: 'https://youtube.com/shorts/28tTmdUfCqA?si=PBXJszcLzKVMibkx', thumb: 'https://img.youtube.com/vi/28tTmdUfCqA/hqdefault.jpg', views: '16K+', duration: '00:30', featured: false },
+            { id: 7, title: '"Average Peter Parker" | Safar (Slowed) | #edit', category: 'Latest Uploads', url: 'https://youtube.com/shorts/zkTJ0PDkQ4c?si=ktCC0J4WRUy19oeG', thumb: 'https://img.youtube.com/vi/zkTJ0PDkQ4c/hqdefault.jpg', views: '302K+', duration: '00:22', featured: true }
+        ];
+
+        const projectsGrid = document.getElementById('projects-grid');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const searchInput = document.getElementById('project-search');
+
+        function renderProjects(filter = 'All Projects', searchQuery = '') {
+            projectsGrid.innerHTML = '';
+            
+            const filtered = projectsData.filter(p => {
+                const matchCat = filter === 'All Projects' ? true : (filter === 'Featured' ? p.featured : p.category === filter);
+                const matchSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchCat && matchSearch;
+            });
+
+            filtered.forEach(p => {
+                const card = document.createElement('a');
+                card.href = p.url;
+                card.target = "_blank";
+                card.setAttribute('data-tilt', '');
+                card.setAttribute('data-tilt-max', '8');
+                card.setAttribute('data-tilt-speed', '400');
+                card.setAttribute('data-tilt-glare', 'true');
+                card.setAttribute('data-tilt-max-glare', '0.2');
+                card.className = "tilt-card group relative rounded-2xl overflow-hidden bg-purple-950/10 border border-purple-500/20 hover:border-purple-500/60 transition-all shadow-lg block cursor-pointer glass-card-hover transform-gpu";
+                
+                card.innerHTML = `
+                    <div class="relative aspect-video overflow-hidden bg-neutral-900/50">
+                        <img src="${p.thumb}" alt="${p.title}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"/>
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#030303] via-[#030303]/40 to-transparent opacity-90"></div>
+                        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-purple-950/40 backdrop-blur-[2px]">
+                            <div class="w-14 h-14 rounded-full bg-purple-600 text-white flex items-center justify-center shadow-[0_0_25px_#a855f7] transform group-hover:scale-110 transition-transform duration-300">
+                                <i data-lucide="play" fill="white" class="w-5 h-5 ml-1"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-5 relative z-10 bg-[#030303]/80">
+                        <span class="text-[10px] font-mono tracking-widest text-purple-400 uppercase bg-purple-950/40 border border-purple-500/20 px-2.5 py-1 rounded-md">${p.category}</span>
+                        <h3 class="text-base font-bold text-white mt-3 line-clamp-2 group-hover:text-purple-300 transition-colors">${p.title}</h3>
+                        <div class="flex items-center justify-between mt-4 text-xs text-neutral-400 font-mono">
+                            <span class="flex items-center gap-1"><i data-lucide="eye" class="w-3 h-3 text-purple-400"></i> ${p.views}</span>
+                            <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3 text-purple-400"></i> ${p.duration}</span>
+                        </div>
+                    </div>
+                `;
+                projectsGrid.appendChild(card);
+            });
+            lucide.createIcons();
+            VanillaTilt.init(document.querySelectorAll(".tilt-card"));
+        }
+
+        renderProjects();
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                filterBtns.forEach(b => {
+                    b.classList.remove('bg-purple-600', 'text-white', 'shadow-[0_0_20px_rgba(168,85,247,0.5)]');
+                    b.classList.add('bg-purple-950/10', 'text-neutral-400');
+                });
+                const target = e.target;
+                target.classList.remove('bg-purple-950/10', 'text-neutral-400');
+                target.classList.add('bg-purple-600', 'text-white', 'shadow-[0_0_20px_rgba(168,85,247,0.5)]');
+                
+                renderProjects(target.getAttribute('data-filter'), searchInput.value);
+            });
+        });
+
+        searchInput.addEventListener('input', (e) => {
+            const activeFilter = document.querySelector('.filter-btn.bg-purple-600').getAttribute('data-filter');
+            renderProjects(activeFilter, e.target.value);
+        });
+
+        const skillsData = [
+            { name: 'Adobe After Effects', level: 95 },
+            { name: 'Motion Graphics', level: 70 },
+            { name: 'Color Grading', level: 65 },
+            { name: 'Creativity', level: 100 },
+            { name: 'Storytelling', level: 90 }
+        ];
+
+        const skillsContainer = document.getElementById('skills-container');
+        skillsData.forEach(skill => {
+            skillsContainer.innerHTML += `
+                <div>
+                    <div class="flex justify-between text-xs text-neutral-300 font-mono mb-1">
+                        <span>${skill.name}</span>
+                        <span class="text-purple-400">${skill.level}%</span>
+                    </div>
+                    <div class="w-full h-2 bg-neutral-900 rounded-full overflow-hidden border border-purple-500/10 transform-gpu">
+                        <div class="h-full bg-gradient-to-r from-purple-600 to-fuchsia-500 shadow-[0_0_10px_#a855f7] skill-bar-fill" data-level="${skill.level}%"></div>
+                    </div>
+                </div>
+            `;
+        });
+    </script>
+</body>
+</html>
