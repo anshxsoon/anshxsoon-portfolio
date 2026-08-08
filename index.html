@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ANSHXSOON | Video Editor & Content Creator</title>
     
+    <!-- Favicon -->
+    <link rel="icon" href="https://cdn.discordapp.com/avatars/1313194277873913896/b27b999aec0c214eaf97c3a19bbb82ca.png?size=4096" type="image/png">
+    
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -364,7 +367,7 @@
             document.title = docTitle;
         });
 
-        // 2. Optimized Lenis Smooth Scroll linked with GSAP Ticker
+        // 2. Optimized Lenis Smooth Scroll
         const lenis = new Lenis({
             lerp: 0.1, 
             smoothWheel: true,
@@ -378,7 +381,7 @@
         
         gsap.ticker.lagSmoothing(0);
 
-        // 3. Custom Cursor (Simplified for performance)
+        // 3. Custom Cursor
         const cursor = document.getElementById('custom-cursor');
         document.addEventListener('mousemove', (e) => {
             cursor.style.transform = `translate3d(calc(${e.clientX}px - 50%), calc(${e.clientY}px - 50%), 0)`;
@@ -462,13 +465,13 @@
 
         // 7. Projects
         const projectsData = [
-            { id: 1, title: 'Andrew Garfield ❤️ "it\'s kind of okay to miss somebody" | Spider-Man Edit', category: 'Love Edits', url: 'https://youtube.com/shorts/d_vFeI98xYw?si=JfJbsxTKDRWON4-e', thumb: 'https://img.youtube.com/vi/d_vFeI98xYw/hqdefault.jpg', views: '24K+', duration: '00:34', featured: false },
-            { id: 2, title: 'The most heartbreaking Spider-Man couple 💔 #GwenStacy', category: 'Spider-Man', url: 'https://youtube.com/shorts/4QUhni1Gc_k?si=cBgGw0FrTI55z8aw', thumb: 'https://img.youtube.com/vi/4QUhni1Gc_k/hqdefault.jpg', views: '37K+', duration: '00:34', featured: true },
-            { id: 3, title: 'POV: You found the perfect Peter & Gwen edit', category: 'Love Edits', url: 'https://youtube.com/shorts/BcIytMV6xlA?si=qRF8EEGVX5rz-qx6', thumb: 'https://img.youtube.com/vi/BcIytMV6xlA/hqdefault.jpg', views: '3.8K+', duration: '00:28', featured: false },
-            { id: 4, title: 'Best edit for Peter and Gwen fans! 🕸️❤️ #Marvel', category: 'Featured', url: 'https://youtube.com/shorts/Kt-j1HhzA7E?si=vQkYUrDCPOzBOhA9', thumb: 'https://img.youtube.com/vi/Kt-j1HhzA7E/hqdefault.jpg', views: '4.7K+', duration: '00:19', featured: true },
-            { id: 5, title: 'Peter and MJ | Spiderman NWH X BND | See You Again', category: 'Spider-Man', url: 'https://youtube.com/shorts/Nh0MuTUyzfc?si=2CVtcfj4Glr6F0Rh', thumb: 'https://img.youtube.com/vi/Nh0MuTUyzfc/hqdefault.jpg', views: '8.6K+', duration: '00:42', featured: false },
-            { id: 6, title: 'They deserved a better ending 🕷️😭 #gwenstacy', category: 'Latest Uploads', url: 'https://youtube.com/shorts/28tTmdUfCqA?si=PBXJszcLzKVMibkx', thumb: 'https://img.youtube.com/vi/28tTmdUfCqA/hqdefault.jpg', views: '16K+', duration: '00:30', featured: false },
-            { id: 7, title: '"Average Peter Parker" | Safar (Slowed) | #edit', category: 'Latest Uploads', url: 'https://youtube.com/shorts/zkTJ0PDkQ4c?si=ktCC0J4WRUy19oeG', thumb: 'https://img.youtube.com/vi/zkTJ0PDkQ4c/hqdefault.jpg', views: '302K+', duration: '00:22', featured: true }
+            { id: 1, title: 'Andrew Garfield | It\'s okay to miss somebody', category: 'Love Edits', url: 'https://youtube.com/shorts/d_vFeI98xYw?si=JfJbsxTKDRWON4-e', thumb: 'https://media.discordapp.net/attachments/1388541506314571931/1535692076178608329/Andrew_And_Elmo.png?ex=6a78b032&is=6a775eb2&hm=54d9ce984bdc728da195669d79181d2be7ce62b3b526c39ca9c7f18b476977e6&=&format=webp&quality=lossless', views: '24K+', duration: '00:34', featured: false },
+            { id: 2, title: 'Main Tera Ho Gaya | Spider-Man Heartbreak Edit', category: 'Spider-Man', url: 'https://youtube.com/shorts/4QUhni1Gc_k?si=cBgGw0FrTI55z8aw', thumb: 'https://media.discordapp.net/attachments/1388541506314571931/1535692076975661136/Main_tera_ho_gya.png?ex=6a78b032&is=6a775eb2&hm=814b6129840cf49345cac2035d5f00cfd9f174aa44d7f3edb1f341b514cd6d23&=&format=webp&quality=lossless', views: '37K+', duration: '00:34', featured: true },
+            { id: 3, title: 'Mere Samne Wali Khidki (Part 2) | Perfect Edit', category: 'Love Edits', url: 'https://youtube.com/shorts/BcIytMV6xlA?si=qRF8EEGVX5rz-qx6', thumb: 'https://media.discordapp.net/attachments/1388541506314571931/1535692078141669396/Mere_Samne_wali_Part3.png?ex=6a78b033&is=6a775eb3&hm=8fa5cb4d5785adcdfb348c48a87df053f8dd5454ca0b58e16b6274b527f6c282&=&format=webp&quality=lossless', views: '3.8K+', duration: '00:28', featured: false },
+            { id: 4, title: 'Mere Samne Wali Khidki (Part 1) | Peter & Gwen', category: 'Featured', url: 'https://youtube.com/shorts/Kt-j1HhzA7E?si=vQkYUrDCPOzBOhA9', thumb: 'https://media.discordapp.net/attachments/1388541506314571931/1535692077596278884/Mere_Samne_wali_Part2.png?ex=6a78b033&is=6a775eb3&hm=f854baec3c192d7b5546054651ebdf2da8d006a429e8da39076244407bf37418&=&format=webp&quality=lossless', views: '4.7K+', duration: '00:19', featured: true },
+            { id: 5, title: 'Mulaqaat | Peter & MJ Spiderman Edit', category: 'Spider-Man', url: 'https://youtube.com/shorts/Nh0MuTUyzfc?si=2CVtcfj4Glr6F0Rh', thumb: 'https://media.discordapp.net/attachments/1388541506314571931/1535692078586138664/Mulaqaat.png?ex=6a78b033&is=6a775eb3&hm=21d1d225094c9af46bece698b600fcfd13ba06cc2da04de8a5b45463932d2fbd&=&format=webp&quality=lossless', views: '8.6K+', duration: '00:42', featured: false },
+            { id: 6, title: 'Tose Naina | Peter & Gwen Emotional Edit', category: 'Latest Uploads', url: 'https://youtube.com/shorts/28tTmdUfCqA?si=PBXJszcLzKVMibkx', thumb: 'https://cdn.discordapp.com/attachments/1388541506314571931/1535694751553163324/TOSE_NAINA.png?ex=6a78b2b0&is=6a776130&hm=27fb6bce097805256e20b6107038de773a50c2746d07533692b15fcc94741949&', views: '16K+', duration: '00:30', featured: false },
+            { id: 7, title: 'Average Peter Parker\'s Life | Safar Edit', category: 'Latest Uploads', url: 'https://youtube.com/shorts/zkTJ0PDkQ4c?si=ktCC0J4WRUy19oeG', thumb: 'https://media.discordapp.net/attachments/1388541506314571931/1535692075197272185/Safar.png?ex=6a78b032&is=6a775eb2&hm=6c37d6120982af562fd7b49a95625a6c692ba8fdb0619d7233b10fa39ca094ab&=&format=webp&quality=lossless', views: '302K+', duration: '00:22', featured: true }
         ];
 
         const projectsGrid = document.getElementById('projects-grid');
