@@ -44,7 +44,15 @@
             background-color: #030303;
             color: #f5f5f5;
             overflow-x: hidden;
-            cursor: none; 
+            overflow-y: auto;
+            cursor: none;
+        }
+
+        html {
+            overflow-x: hidden;
+            overflow-y: auto;
+            height: auto;
+            scroll-behavior: smooth;
         }
 
         /* Highly Optimized Noise Texture (Base64 PNG instead of heavy SVG Filter) */
@@ -367,21 +375,8 @@
             document.title = docTitle;
         });
 
-        // 2. High Performance Lenis Smooth Scroll
-        const lenis = new Lenis({
-            duration: 0.8, // Faster response to reduce delay feel
-            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-            smoothWheel: true,
-            wheelMultiplier: 1.2,
-        });
-
-        function raf(time) {
-            lenis.raf(time);
-            requestAnimationFrame(raf);
-        }
-        requestAnimationFrame(raf);
-
-        // Disconnected GSAP ticker from Lenis to prevent fighting loops which causes lag.
+        // 2. Native scrolling (more reliable across desktop and mobile)
+        // Lenis was removed because it could interfere with normal wheel/touch scrolling.
 
         // 3. Custom Cursor (Optimized)
         const cursor = document.getElementById('custom-cursor');
